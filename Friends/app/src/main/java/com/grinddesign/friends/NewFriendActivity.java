@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.parse.ParseACL;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -50,6 +51,7 @@ public class NewFriendActivity extends ActionBarActivity {
                 ParseObject rf = new ParseObject("rf");
                 rf.put("Name", name);
                 rf.put("State", state);
+                rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
                 rf.saveInBackground();
                 Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
                 startActivity(friendlist);
