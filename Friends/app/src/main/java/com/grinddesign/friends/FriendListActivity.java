@@ -1,13 +1,16 @@
 package com.grinddesign.friends;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.parse.ParseUser;
 
-public class FriendListActivity extends Activity {
+
+public class FriendListActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +34,15 @@ public class FriendListActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.add) {
+            Intent addnew = new Intent(this, NewFriendActivity.class);
+            this.startActivity(addnew);
+        }
+        else if (id == R.id.logout) {
+            ParseUser.logOut();
+            Intent logout = new Intent(this, LoginActivity.class);
+            this.startActivity(logout);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
