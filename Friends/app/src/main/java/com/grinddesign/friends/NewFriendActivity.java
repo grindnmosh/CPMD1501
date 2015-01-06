@@ -1,31 +1,60 @@
 package com.grinddesign.friends;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 
 public class NewFriendActivity extends ActionBarActivity {
 
     String[] states;
+    Button save;
+    String name;
+    String state;
+    EditText fname;
+    Spinner fState;
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newfriend);
 
-        Spinner s = (Spinner) findViewById(R.id.spinner);
+        fname = (EditText) findViewById(R.id.friend);
+        save = (Button) findViewById(R.id.save);
+        fState = (Spinner) findViewById(R.id.spinner);
+
         states = getResources().getStringArray(R.array.states);
 
         ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, states);
 
-        s.setAdapter(statesAdapter);
+        fState.setAdapter(statesAdapter);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                name = fname.getText().toString();
+                state = fState.getSelectedItem().toString();
+                ParseObject rf = new ParseObject("rf");
+                rf.put("Name", name);
+                rf.put("State", state);
+                rf.saveInBackground();
+                Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
+                startActivity(friendlist);
+            }
+        });
     }
 
 
