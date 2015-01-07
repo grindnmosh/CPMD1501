@@ -4,18 +4,70 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.parse.FindCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FriendListActivity extends ActionBarActivity {
 
+    ArrayList<String> nameArray = new ArrayList<String>();
+    ArrayList<String> stateArray = new ArrayList<String>();
+    ArrayAdapter<String> mainAdapter;
+    ListView lv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friendlist);
+
+        lv = (ListView) findViewById(R.id.lv);
+
+        Log.i("Array", "Entry POint Query");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+            @Override
+            public void done(List list, com.parse.ParseException e) {
+                Log.i("Array", "Entry POint Done");
+
+                if (e == null) {
+                    for (int i = 0; i < list.size(); i++) {
+
+                        Object object = list.get(i);
+                        String name = ((ParseObject) object).getString("Name");
+                        String state = ((ParseObject) object).getString("State");
+                        Log.i("Array", name);
+                        Log.i("Array", state);
+
+                        nameArray.add(name);
+                        stateArray.add(state);
+                        if (nameArray != null) {
+                            Log.i("Array", nameArray.toString());
+                        }
+                        mainAdapter.notifyDataSetChanged();
+
+                    }
+
+                } else {
+                    Log.d("Failed", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+        mainAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameArray);
+        lv.setAdapter(mainAdapter);
+
     }
 
 
@@ -46,5 +98,6 @@ public class FriendListActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+
     }
 }

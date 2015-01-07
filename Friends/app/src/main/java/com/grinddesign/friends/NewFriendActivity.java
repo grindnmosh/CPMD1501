@@ -26,7 +26,6 @@ public class NewFriendActivity extends ActionBarActivity {
     String state;
     EditText fname;
     Spinner fState;
-    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
