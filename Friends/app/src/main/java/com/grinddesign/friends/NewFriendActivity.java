@@ -17,6 +17,8 @@ import com.parse.ParseACL;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+
 
 public class NewFriendActivity extends ActionBarActivity {
 
@@ -38,7 +40,7 @@ public class NewFriendActivity extends ActionBarActivity {
 
         states = getResources().getStringArray(R.array.states);
 
-        ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, states);
+        final ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, states);
 
         fState.setAdapter(statesAdapter);
 
@@ -48,10 +50,13 @@ public class NewFriendActivity extends ActionBarActivity {
                 name = fname.getText().toString();
                 state = fState.getSelectedItem().toString();
                 ParseObject rf = new ParseObject("rf");
+                FriendListActivity.nameArray = new ArrayList<String> ();
+                FriendListActivity.mainAdapter.notifyDataSetChanged();
                 rf.put("Name", name);
                 rf.put("State", state);
                 rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
                 rf.saveInBackground();
+
                 Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
                 startActivity(friendlist);
             }
