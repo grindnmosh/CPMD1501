@@ -1,6 +1,7 @@
 package com.grinddesign.friends;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -22,13 +23,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FriendListActivity extends ActionBarActivity implements AdapterView.OnItemLongClickListener {
+public class FriendListActivity extends ActionBarActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
 
     public static ArrayList<String> nameArray = new ArrayList<String>();
     public static ArrayList<String> stateArray = new ArrayList<String>();
+    public static ArrayList<String> oidArray = new ArrayList<String>();
     public static ArrayAdapter<String> mainAdapter;
     ListView lv;
     String namePos;
+    String oidPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
         lv = (ListView) findViewById(R.id.lv);
         nameArray = new ArrayList<String>();
         stateArray = new ArrayList<String>();
+        oidArray = new ArrayList<String>();
         Log.i("Array", "Entry POint Query");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -53,15 +57,18 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                         Object object = list.get(i);
                         String name = ((ParseObject) object).getString("Name");
                         String state = ((ParseObject) object).getString("State");
+                        String oid = ((ParseObject) object).getObjectId();
                         Log.i("Array", name);
                         Log.i("Array", state);
+                        Log.i("ID", oid);
 
                         nameArray.add(name);
                         stateArray.add(state);
+                        oidArray.add(oid);
                         if (nameArray != null) {
-                            Log.i("Array", nameArray.toString());
+                            Log.i("Array", oidArray.toString());
+                            mainAdapter.notifyDataSetChanged();
                         }
-                        mainAdapter.notifyDataSetChanged();
 
                     }
 
@@ -71,7 +78,8 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             }
         });
 
-        mainAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nameArray);
+        mainAdapter = new FriendCell(this, R.layout.activity_friendcell, nameArray);
+        lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);
         lv.setAdapter(mainAdapter);
 
@@ -144,5 +152,36 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+        query.findInBackground(new FindCallback<ParseObject>() {
 
+            @Override
+            public void done(List list, com.parse.ParseException e) {
+
+                if (e == null) {
+                    oidPos = oidArray.get(position);
+                    for (int i = 0; i < list.size(); i++) {
+                        Object object = list.get(i);
+                        String oid = ((ParseObject) object).getObjectId();
+                        if (oidPos.equals(oid)) {
+                            Log.i("ObjectID", oid);
+                            Intent update = new Intent(FriendListActivity.this, UpdateActivity.class);
+                            update.putExtra("object ID", oid);
+                            startActivity(update);
+                        }
+
+
+
+                    }
+
+                } else {
+                    Log.d("Failed", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+
+    }
 }

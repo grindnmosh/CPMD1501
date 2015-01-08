@@ -31,6 +31,14 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_main" >
         </activity>
+        <activity
+            android:name=".FriendCell"
+            android:label="@string/title_activity_friend_cell" >
+        </activity>
+        <activity
+            android:name=".UpdateActivity"
+            android:label="@string/title_activity_update" >
+        </activity>
     </application>
 
 </manifest>

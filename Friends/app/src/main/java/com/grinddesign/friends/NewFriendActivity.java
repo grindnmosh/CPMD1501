@@ -51,12 +51,11 @@ public class NewFriendActivity extends ActionBarActivity {
                 state = fState.getSelectedItem().toString();
                 ParseObject rf = new ParseObject("rf");
                 FriendListActivity.nameArray = new ArrayList<String> ();
-                FriendListActivity.mainAdapter.notifyDataSetChanged();
                 rf.put("Name", name);
                 rf.put("State", state);
                 rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
                 rf.saveInBackground();
-
+                FriendListActivity.mainAdapter.notifyDataSetChanged();
                 Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
                 startActivity(friendlist);
             }
