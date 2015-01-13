@@ -9,20 +9,29 @@
     tools:context="com.grinddesign.osa.TimeCell">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Friend Name"
         android:id="@+id/name"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignEnd="@+id/year" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="State Name"
         android:id="@+id/state"
-        android:layout_alignBottom="@+id/name"
-        android:layout_alignParentRight="true"
+        android:layout_below="@+id/name"
+        android:layout_alignStart="@+id/name" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Years"
+        android:id="@+id/year"
+        android:layout_alignTop="@+id/state"
         android:layout_alignParentEnd="true" />
 </RelativeLayout>

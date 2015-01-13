@@ -14,9 +14,16 @@
     NSString *name;
     NSString *state;
     NSNumber *years;
+    NSString *objId;
     PFQuery *query;
     NSMutableArray *friendsObj;
     NSMutableArray *yearsObj;
+    NSMutableArray *idObj;
+    NSMutableArray *stateObj;
+    NSString *passName;
+    NSNumber *passYear;
+    NSString *passState;
+    NSString *passId;
 }
 @property (weak, nonatomic) IBOutlet UITableView *friendslist;
 

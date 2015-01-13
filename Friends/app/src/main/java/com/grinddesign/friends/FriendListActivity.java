@@ -28,6 +28,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     public static ArrayList<String> nameArray = new ArrayList<String>();
     public static ArrayList<String> stateArray = new ArrayList<String>();
     public static ArrayList<String> oidArray = new ArrayList<String>();
+    public static ArrayList<String> yearArray = new ArrayList<String>();
     public static ArrayAdapter<String> mainAdapter;
     ListView lv;
     String namePos;
@@ -42,6 +43,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
         nameArray = new ArrayList<String>();
         stateArray = new ArrayList<String>();
         oidArray = new ArrayList<String>();
+        yearArray = new ArrayList<String>();
         Log.i("Array", "Entry POint Query");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
         query.findInBackground(new FindCallback<ParseObject>() {
@@ -57,14 +59,17 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                         Object object = list.get(i);
                         String name = ((ParseObject) object).getString("Name");
                         String state = ((ParseObject) object).getString("State");
+                        String year = ((ParseObject) object).getString("Age");
                         String oid = ((ParseObject) object).getObjectId();
                         Log.i("Array", name);
                         Log.i("Array", state);
+                        Log.i("Array", year);
                         Log.i("ID", oid);
 
                         nameArray.add(name);
                         stateArray.add(state);
                         oidArray.add(oid);
+                        yearArray.add(year);
                         if (nameArray != null) {
                             Log.i("Array", oidArray.toString());
                             mainAdapter.notifyDataSetChanged();

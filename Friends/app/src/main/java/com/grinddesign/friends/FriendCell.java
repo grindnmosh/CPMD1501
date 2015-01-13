@@ -2,17 +2,11 @@ package com.grinddesign.friends;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 
@@ -32,6 +26,7 @@ public class FriendCell extends ArrayAdapter<String> {
 
         String names = arrayLister.get(position);
         String states = FriendListActivity.stateArray.get(position);
+        String years = FriendListActivity.yearArray.get(position);
 
 
 
@@ -46,6 +41,10 @@ public class FriendCell extends ArrayAdapter<String> {
         //this is to assign the date to the proper field
         TextView tvSub  = (TextView) view.findViewById(R.id.state);
         tvSub.setText(states);
+
+        //this is to assign the date to the proper field
+        TextView tvSub2  = (TextView) view.findViewById(R.id.year);
+        tvSub2.setText(years);
 
         return view;
     }

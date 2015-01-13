@@ -26,7 +26,9 @@ public class NewFriendActivity extends ActionBarActivity {
     Button save;
     String name;
     String state;
+    String year;
     EditText fname;
+    EditText fyear;
     Spinner fState;
 
     @Override
@@ -35,6 +37,7 @@ public class NewFriendActivity extends ActionBarActivity {
         setContentView(R.layout.activity_newfriend);
 
         fname = (EditText) findViewById(R.id.friend);
+        fyear = (EditText) findViewById(R.id.year1);
         save = (Button) findViewById(R.id.save);
         fState = (Spinner) findViewById(R.id.spinner);
 
@@ -48,11 +51,13 @@ public class NewFriendActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 name = fname.getText().toString();
+                year = fyear.getText().toString();
                 state = fState.getSelectedItem().toString();
                 ParseObject rf = new ParseObject("rf");
                 FriendListActivity.nameArray = new ArrayList<String> ();
                 rf.put("Name", name);
                 rf.put("State", state);
+                rf.put("Age", year);
                 rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
                 rf.saveInBackground();
                 FriendListActivity.mainAdapter.notifyDataSetChanged();

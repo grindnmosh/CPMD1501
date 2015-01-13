@@ -28,8 +28,10 @@ public class UpdateActivity extends ActionBarActivity {
     String name;
     String state;
     String ois;
+    String year;
     EditText upName;
     Spinner upState;
+    EditText upYear;
     TextView objId;
     Button upButt;
 
@@ -39,6 +41,7 @@ public class UpdateActivity extends ActionBarActivity {
         setContentView(R.layout.activity_update);
 
         upName = (EditText) findViewById(R.id.upName);
+        upYear = (EditText) findViewById(R.id.year2);
         upState = (Spinner) findViewById(R.id.stateSpin);
         objId = (TextView) findViewById(R.id.currId);
         upButt = (Button) findViewById(R.id.upButt);
@@ -59,8 +62,10 @@ public class UpdateActivity extends ActionBarActivity {
             public void done(ParseObject object, com.parse.ParseException e) {
                 if (e == null) {
                     name = object.getString("Name");
+                    year = object.getString("Age");
                     state = object.getString("State");
                     upName.setText(name);
+                    upYear.setText(year);
                     if (!state.equals(null)) {
                         int spinnerPosition = statesAdapter.getPosition(state);
                         upState.setSelection(spinnerPosition);
@@ -74,6 +79,7 @@ public class UpdateActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 name = upName.getText().toString();
+                year = upYear.getText().toString();
                 state = upState.getSelectedItem().toString();
                 FriendListActivity.nameArray = new ArrayList<String>();
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
@@ -82,12 +88,14 @@ public class UpdateActivity extends ActionBarActivity {
                         if (e == null) {
                             object.put("Name", name);
                             object.put("State", state);
+                            object.put("Age", year);
                             object.saveInBackground();
                             FriendListActivity.mainAdapter.notifyDataSetChanged();
 
                         }
                     }
                 });
+                FriendListActivity.mainAdapter.notifyDataSetChanged();
                 Intent friendlist = new Intent(UpdateActivity.this, FriendListActivity.class);
                 startActivity(friendlist);
             }
