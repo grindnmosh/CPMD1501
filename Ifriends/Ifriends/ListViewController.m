@@ -61,6 +61,7 @@
         }
         [_friendslist reloadData];
     }];
+    [_friendslist reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -86,6 +87,9 @@
             if (!error) {
                 PFObject *myObject = [objects objectAtIndex:indexPath.row];
                 [friendsObj removeObjectAtIndex:indexPath.row];
+                [stateObj removeObjectAtIndex:indexPath.row];
+                [yearsObj removeObjectAtIndex:indexPath.row];
+                [idObj removeObjectAtIndex:indexPath.row];
                 [myObject deleteInBackground];
                 [_friendslist reloadData];
             } else {
@@ -101,27 +105,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    /*static NSString *ident =  @"friends";
-    UITableViewCell *cell = [_friendslist dequeueReusableCellWithIdentifier:ident];
-    if (!cell)
-    {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:ident];
-    }
-    cell.accessoryType = UITableViewCellAccessoryDetailDisclosureButton;
-    NSString *currentFr = [friendsObj objectAtIndex:[indexPath row]];
-    NSString *currentyears = [yearsObj objectAtIndex:[indexPath row]];
-    cell.textLabel.text = currentFr;
-    cell.detailTextLabel.text = currentyears;*/
+   
     
     FCell *cell = [_friendslist dequeueReusableCellWithIdentifier:@"FCell"];
     if (cell != nil)
     {
-        NSString *currentFr = [friendsObj objectAtIndex:[indexPath row]];
-        NSString *currentYears = [yearsObj objectAtIndex:[indexPath row]];
-        NSString *currentSt = [stateObj objectAtIndex:[indexPath row]];
-        cell.name = currentFr;
-        cell.state = currentSt;
-        cell.year = currentYears;
+        cell.name = [friendsObj objectAtIndex:[indexPath row]];
+        cell.state = [stateObj objectAtIndex:[indexPath row]];
+        cell.year = [yearsObj objectAtIndex:[indexPath row]];
         
         [cell loadCell];
         return cell;
@@ -135,11 +126,16 @@
 //transfer information to new view controller
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    UpdateViewController *destination = segue.destinationViewController;
-    destination.insertName = passName;
-    destination.insertYear = passYear;
-    destination.insertState = passState;
-    destination.insertId = passId;
+    if ([segue.identifier isEqualToString:@"update"]) {
+        UpdateViewController *destination = segue.destinationViewController;
+        destination.insertName = passName;
+        destination.insertYear = passYear;
+        destination.insertState = passState;
+        destination.insertId = passId;
+    }else{
+        
+    }
+    
     
 }
 
@@ -170,7 +166,7 @@
     //add button
     else if (button.tag == 1)
     {
-       
+       [self performSegueWithIdentifier: @"add" sender: self];
     }
 }
 

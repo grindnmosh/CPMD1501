@@ -78,7 +78,7 @@
                 [self performSegueWithIdentifier: @"logged" sender: self];
                 
             } else {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Failed" message:@"Please Try Again" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log In Failed" message:@"Please Try Again or Sign Up" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                 [alert show];
             }
         }];
