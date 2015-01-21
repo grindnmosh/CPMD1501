@@ -1,8 +1,12 @@
 package com.grinddesign.friends;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.grinddesign.test.Connection;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseACL;
 import com.parse.ParseObject;
@@ -20,6 +27,7 @@ import com.parse.ParseUser;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class UpdateActivity extends ActionBarActivity {
@@ -34,6 +42,7 @@ public class UpdateActivity extends ActionBarActivity {
     EditText upYear;
     TextView objId;
     Button upButt;
+    Context thisHere = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,24 +65,54 @@ public class UpdateActivity extends ActionBarActivity {
         ois = i.getStringExtra("object ID");
 
         objId.setText(ois);
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
 
-        query.getInBackground(ois, new GetCallback<ParseObject>() {
-            public void done(ParseObject object, com.parse.ParseException e) {
-                if (e == null) {
-                    name = object.getString("Name");
-                    year = object.getString("Age");
-                    state = object.getString("State");
-                    upName.setText(name);
-                    upYear.setText(year);
-                    if (!state.equals(null)) {
-                        int spinnerPosition = statesAdapter.getPosition(state);
-                        upState.setSelection(spinnerPosition);
+        ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+
+            Connection con = new Connection(thisHere);
+            con.connection();
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+
+            query.getInBackground(ois, new GetCallback<ParseObject>() {
+                public void done(ParseObject object, com.parse.ParseException e) {
+                    if (e == null) {
+                        name = object.getString("Name");
+                        year = object.getString("Age");
+                        state = object.getString("State");
+                        upName.setText(name);
+                        upYear.setText(year);
+                        if (!state.equals(null)) {
+                            int spinnerPosition = statesAdapter.getPosition(state);
+                            upState.setSelection(spinnerPosition);
+                        }
+
                     }
-
                 }
-            }
-        });
+            });
+
+        }else{
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            query.fromLocalDatastore();
+            query.getInBackground(ois, new GetCallback<ParseObject>() {
+                public void done(ParseObject object, com.parse.ParseException e) {
+                    if (e == null) {
+                        name = object.getString("Name");
+                        year = object.getString("Age");
+                        state = object.getString("State");
+                        upName.setText(name);
+                        upYear.setText(year);
+                        if (!state.equals(null)) {
+                            int spinnerPosition = statesAdapter.getPosition(state);
+                            upState.setSelection(spinnerPosition);
+                        }
+
+                    }
+                }
+            });
+        }
+
 
         upButt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,23 +120,55 @@ public class UpdateActivity extends ActionBarActivity {
                 name = upName.getText().toString();
                 year = upYear.getText().toString();
                 state = upState.getSelectedItem().toString();
-                FriendListActivity.nameArray = new ArrayList<String>();
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
-                query.getInBackground(ois, new GetCallback<ParseObject>() {
-                    public void done(ParseObject object, com.parse.ParseException e) {
-                        if (e == null) {
-                            object.put("Name", name);
-                            object.put("State", state);
-                            object.put("Age", year);
-                            object.saveInBackground();
-                            FriendListActivity.mainAdapter.notifyDataSetChanged();
+                //FriendListActivity.nameArray = new ArrayList<String>();
 
+                ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+
+                    Connection con = new Connection(thisHere);
+                    con.connection();
+
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+                    query.getInBackground(ois, new GetCallback<ParseObject>() {
+                        public void done(ParseObject object, com.parse.ParseException e) {
+                            if (e == null) {
+                                object.put("Name", name);
+                                object.put("State", state);
+                                object.put("Age", year);
+
+                                object.saveInBackground();
+                                FriendListActivity.mainAdapter.notifyDataSetChanged();
+
+                            }
                         }
-                    }
-                });
-                FriendListActivity.mainAdapter.notifyDataSetChanged();
-                Intent friendlist = new Intent(UpdateActivity.this, FriendListActivity.class);
-                startActivity(friendlist);
+                    });
+                    FriendListActivity.mainAdapter.notifyDataSetChanged();
+                    Intent friendlist = new Intent(UpdateActivity.this, FriendListActivity.class);
+                    startActivity(friendlist);
+
+                }else{
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+                    query.fromLocalDatastore();
+                    query.getInBackground(ois, new GetCallback<ParseObject>() {
+                        public void done(ParseObject object, com.parse.ParseException e) {
+                            if (e == null) {
+                                object.put("Name", name);
+                                object.put("State", state);
+                                object.put("Age", year);
+
+                                object.pinInBackground();
+                                object.saveEventually();
+                                FriendListActivity.mainAdapter.notifyDataSetChanged();
+
+                            }
+                        }
+                    });
+                    FriendListActivity.mainAdapter.notifyDataSetChanged();
+                    Intent friendlist = new Intent(UpdateActivity.this, FriendListActivity.class);
+                    startActivity(friendlist);
+                }
+
             }
         });
     }

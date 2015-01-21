@@ -3,6 +3,8 @@ package com.grinddesign.friends;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,12 +14,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.grinddesign.test.Connection;
+import com.parse.GetCallback;
 import com.parse.ParseACL;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class NewFriendActivity extends ActionBarActivity {
@@ -30,6 +37,7 @@ public class NewFriendActivity extends ActionBarActivity {
     EditText fname;
     EditText fyear;
     Spinner fState;
+    Context thisHere = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +61,37 @@ public class NewFriendActivity extends ActionBarActivity {
                 name = fname.getText().toString();
                 year = fyear.getText().toString();
                 state = fState.getSelectedItem().toString();
-                ParseObject rf = new ParseObject("rf");
-                FriendListActivity.nameArray = new ArrayList<String> ();
-                rf.put("Name", name);
-                rf.put("State", state);
-                rf.put("Age", year);
-                rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
-                rf.saveInBackground();
-                FriendListActivity.mainAdapter.notifyDataSetChanged();
-                Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
-                startActivity(friendlist);
+
+                ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+
+                    Connection con = new Connection(thisHere);
+                    con.connection();
+
+                    ParseObject rf = new ParseObject("rf");
+                    rf.put("Name", name);
+                    rf.put("State", state);
+                    rf.put("Age", year);
+                    rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
+                    rf.saveInBackground();
+                    FriendListActivity.mainAdapter.notifyDataSetChanged();
+                    Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
+                    startActivity(friendlist);
+
+                }else{
+                    ParseObject rf = new ParseObject("rf");
+                    rf.put("Name", name);
+                    rf.put("State", state);
+                    rf.put("Age", year);
+
+                    rf.pinInBackground();
+                    rf.saveEventually();
+                    FriendListActivity.mainAdapter.notifyDataSetChanged();
+                    Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
+                    startActivity(friendlist);
+                }
+
             }
         });
     }

@@ -3,6 +3,8 @@ package com.grinddesign.friends;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,11 +14,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.grinddesign.test.Connection;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -33,11 +39,14 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     ListView lv;
     String namePos;
     String oidPos;
+    Context thisHere = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friendlist);
+
+
 
         lv = (ListView) findViewById(R.id.lv);
         nameArray = new ArrayList<String>();
@@ -45,26 +54,88 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
         oidArray = new ArrayList<String>();
         yearArray = new ArrayList<String>();
         Log.i("Array", "Entry POint Query");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
-        query.findInBackground(new FindCallback<ParseObject>() {
 
-            @Override
-            public void done(List list, com.parse.ParseException e) {
-                Log.i("Array", "Entry POint Done");
+        ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+
+            Connection con = new Connection(thisHere);
+            con.connection();
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            try {
+                List<ParseObject> objects = query.find();
+                ParseObject.pinAllInBackground(objects);
+            } catch (com.parse.ParseException e) {
+                e.printStackTrace();
+            }
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+
+                @Override
+                public void done(List list, com.parse.ParseException e) {
+                    Log.i("Array", "Entry POint Done");
+
+                    if (e == null) {
+                        for (int i = 0; i < list.size(); i++) {
+
+                            Object object = list.get(i);
 
 
-                if (e == null) {
+
+                            String name = ((ParseObject) object).getString("Name");
+                            String state = ((ParseObject) object).getString("State");
+                            String year = ((ParseObject) object).getString("Age");
+                            String oid = ((ParseObject) object).getObjectId();
+
+
+
+                            Log.i("Array", name);
+                            Log.i("Array", state);
+                            Log.i("Array", year);
+                            Log.i("ID", oid);
+
+                            nameArray.add(name);
+                            stateArray.add(state);
+                            oidArray.add(oid);
+                            yearArray.add(year);
+                            if (nameArray != null) {
+                                Log.i("Array", oidArray.toString());
+                                mainAdapter.notifyDataSetChanged();
+                            }
+
+                        }
+
+                    } else {
+                        Log.d("Failed", "Error: " + e.getMessage());
+                    }
+                }
+            });
+
+            mainAdapter = new FriendCell(this, R.layout.activity_friendcell, nameArray);
+            lv.setOnItemClickListener(this);
+            lv.setOnItemLongClickListener(this);
+            lv.setAdapter(mainAdapter);
+
+        }else{
+            Log.i("testing", "HITTTTTTT!!!!!!");
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            query.fromLocalDatastore();
+            query.findInBackground(new FindCallback() {
+                @Override
+                public void done(List list, com.parse.ParseException e) {
+                    Log.i("testing", "HITTTTTTT!!!!!!");
+                    Log.i("testing", list.toString());
                     for (int i = 0; i < list.size(); i++) {
-
+                        Log.i("testing", "HITTTTTTT!!!!!!");
                         Object object = list.get(i);
+                        Log.i("testing", object.toString());
                         String name = ((ParseObject) object).getString("Name");
                         String state = ((ParseObject) object).getString("State");
                         String year = ((ParseObject) object).getString("Age");
                         String oid = ((ParseObject) object).getObjectId();
-                        Log.i("Array", name);
-                        Log.i("Array", state);
-                        Log.i("Array", year);
-                        Log.i("ID", oid);
+
 
                         nameArray.add(name);
                         stateArray.add(state);
@@ -77,16 +148,19 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
                     }
 
-                } else {
-                    Log.d("Failed", "Error: " + e.getMessage());
                 }
-            }
-        });
 
-        mainAdapter = new FriendCell(this, R.layout.activity_friendcell, nameArray);
-        lv.setOnItemClickListener(this);
-        lv.setOnItemLongClickListener(this);
-        lv.setAdapter(mainAdapter);
+
+            });
+
+            mainAdapter = new FriendCell(this, R.layout.activity_friendcell, nameArray);
+            lv.setOnItemClickListener(this);
+            lv.setOnItemLongClickListener(this);
+            lv.setAdapter(mainAdapter);
+
+
+        }
+
 
     }
 
@@ -124,68 +198,148 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View strings,
                                    final int position, long id) {
-        Log.i("CLick Click", "BOOOOOM");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
-        query.findInBackground(new FindCallback<ParseObject>() {
 
-            @Override
-            public void done(List list, com.parse.ParseException e) {
+        ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-                if (e == null) {
-                    namePos = nameArray.get(position);
-                    for (int i = 0; i < list.size(); i++) {
-                        Object object = list.get(i);
-                        String name = ((ParseObject) object).getString("Name");
-                        String state = ((ParseObject) object).getString("State");
-                        if (namePos.equals(name)) {
-                            ((ParseObject) object).deleteInBackground();
-                            nameArray.remove(name);
-                            stateArray.remove(state);
-                            mainAdapter.notifyDataSetChanged();
+            Connection con = new Connection(thisHere);
+            con.connection();
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            query.findInBackground(new FindCallback<ParseObject>() {
+
+                @Override
+                public void done(List list, com.parse.ParseException e) {
+
+                    if (e == null) {
+                        namePos = nameArray.get(position);
+                        for (int i = 0; i < list.size(); i++) {
+                            Object object = list.get(i);
+                            String name = ((ParseObject) object).getString("Name");
+                            String state = ((ParseObject) object).getString("State");
+                            String age = ((ParseObject) object).getString("Age");
+                            if (namePos.equals(name)) {
+                                ((ParseObject) object).unpinInBackground();
+                                nameArray.remove(name);
+                                stateArray.remove(state);
+                                stateArray.remove(age);
+                                mainAdapter.notifyDataSetChanged();
+                            }
+
+
+
                         }
 
-
-
+                    } else {
+                        Log.d("Failed", "Error: " + e.getMessage());
                     }
-
-                } else {
-                    Log.d("Failed", "Error: " + e.getMessage());
                 }
-            }
-        });
+            });
+
+        }else{
+            final ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            query.fromLocalDatastore();
+            query.findInBackground(new FindCallback<ParseObject>() {
+
+                @Override
+                public void done(List list, com.parse.ParseException e) {
+
+                    if (e == null) {
+                        namePos = nameArray.get(position);
+                        for (int i = 0; i < list.size(); i++) {
+                            Object object = list.get(i);
+                            String name = ((ParseObject) object).getString("Name");
+                            String state = ((ParseObject) object).getString("State");
+                            String age = ((ParseObject) object).getString("Age");
+                            if (namePos.equals(name)) {
+                                ((ParseObject) object).unpinInBackground();
+                                ((ParseObject) object).deleteEventually();
+                                nameArray.remove(name);
+                                stateArray.remove(state);
+                                stateArray.remove(age);
+                                mainAdapter.notifyDataSetChanged();
+                            }
+                        }
+
+                    } else {
+                        Log.d("Failed", "Error: " + e.getMessage());
+                    }
+                }
+            });
+        }
+
         return false;
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
-        query.findInBackground(new FindCallback<ParseObject>() {
 
-            @Override
-            public void done(List list, com.parse.ParseException e) {
+        ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-                if (e == null) {
-                    oidPos = oidArray.get(position);
-                    for (int i = 0; i < list.size(); i++) {
-                        Object object = list.get(i);
-                        String oid = ((ParseObject) object).getObjectId();
-                        if (oidPos.equals(oid)) {
-                            Log.i("ObjectID", oid);
-                            Intent update = new Intent(FriendListActivity.this, UpdateActivity.class);
-                            update.putExtra("object ID", oid);
-                            startActivity(update);
+            Connection con = new Connection(thisHere);
+            con.connection();
+
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            query.findInBackground(new FindCallback<ParseObject>() {
+
+                @Override
+                public void done(List list, com.parse.ParseException e) {
+
+                    if (e == null) {
+                        oidPos = oidArray.get(position);
+                        for (int i = 0; i < list.size(); i++) {
+                            Object object = list.get(i);
+                            String oid = ((ParseObject) object).getObjectId();
+                            if (oidPos.equals(oid)) {
+                                Log.i("ObjectID", oid);
+                                Intent update = new Intent(FriendListActivity.this, UpdateActivity.class);
+                                update.putExtra("object ID", oid);
+                                startActivity(update);
+                            }
+
+
+
                         }
 
+                    } else {
+                        Log.d("Failed", "Error: " + e.getMessage());
+                    }
+                }
+            });
 
 
+        }else{
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+            query.fromLocalDatastore();
+            query.findInBackground(new FindCallback() {
+                @Override
+                public void done(List list, com.parse.ParseException e) {
+                    if (e == null) {
+                        oidPos = oidArray.get(position);
+                        for (int i = 0; i < list.size(); i++) {
+                            Object object = list.get(i);
+                            String oid = ((ParseObject) object).getObjectId();
+
+                            Intent update = new Intent(FriendListActivity.this, UpdateActivity.class);
+                            update.putExtra("object ID", oidPos);
+                            startActivity(update);
+
+                        }
+
+                    } else {
+                        Log.d("Failed", "Error: " + e.getMessage());
                     }
 
-                } else {
-                    Log.d("Failed", "Error: " + e.getMessage());
                 }
-            }
-        });
+
+
+            });
+        }
+
 
 
     }
