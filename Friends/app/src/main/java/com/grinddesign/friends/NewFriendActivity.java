@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +49,7 @@ public class NewFriendActivity extends ActionBarActivity {
         fyear = (EditText) findViewById(R.id.year1);
         save = (Button) findViewById(R.id.save);
         fState = (Spinner) findViewById(R.id.spinner);
-
+        fyear.setFilters(new InputFilter[]{new NumInputFilter(0, 120)});
         states = getResources().getStringArray(R.array.states);
 
         final ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, states);
@@ -58,39 +59,43 @@ public class NewFriendActivity extends ActionBarActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                name = fname.getText().toString();
-                year = fyear.getText().toString();
-                state = fState.getSelectedItem().toString();
+                name = fname.getText().toString().trim();
+                year = fyear.getText().toString().trim();
+                state = fState.getSelectedItem().toString().trim();
 
-                ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo netInfo = cm.getActiveNetworkInfo();
-                if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+                if (!name.equals("") && !year.equals("") && !state.equals("Select A State")) {
+
+                    ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                    if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
 
+                        ParseObject rf = new ParseObject("rf");
+                        rf.put("Name", name);
+                        rf.put("State", state);
+                        rf.put("Age", year);
+                        rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
+                        rf.saveInBackground();
+                        FriendListActivity.mainAdapter.notifyDataSetChanged();
+                        Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
+                        startActivity(friendlist);
 
-                    ParseObject rf = new ParseObject("rf");
-                    rf.put("Name", name);
-                    rf.put("State", state);
-                    rf.put("Age", year);
-                    rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
-                    rf.saveInBackground();
-                    FriendListActivity.mainAdapter.notifyDataSetChanged();
-                    Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
-                    startActivity(friendlist);
+                    } else {
+                        ParseObject rf = new ParseObject("rf");
+                        rf.put("Name", name);
+                        rf.put("State", state);
+                        rf.put("Age", year);
+                        rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
+                        rf.pinInBackground();
+                        rf.saveEventually();
+                        FriendListActivity.mainAdapter.notifyDataSetChanged();
+                        Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
+                        startActivity(friendlist);
+                    }
 
                 }else{
-                    ParseObject rf = new ParseObject("rf");
-                    rf.put("Name", name);
-                    rf.put("State", state);
-                    rf.put("Age", year);
-                    rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
-                    rf.pinInBackground();
-                    rf.saveEventually();
-                    FriendListActivity.mainAdapter.notifyDataSetChanged();
-                    Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);
-                    startActivity(friendlist);
+                    Toast.makeText(thisHere, "Please fill out all fields before saving", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
     }

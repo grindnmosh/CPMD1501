@@ -78,7 +78,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
                 @Override
                 public void done(List list, com.parse.ParseException e) {
-                    Log.i("Array", "Entry POint Done");
+                    Log.i("Array", "Entry Point Done");
 
                     if (e == null) {
                         for (int i = 0; i < list.size(); i++) {
