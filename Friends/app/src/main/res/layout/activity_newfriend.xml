@@ -28,7 +28,7 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:inputType="textPersonName|textCapWords"
         android:ems="10"
         android:id="@+id/friend"
         android:layout_below="@+id/textView5"

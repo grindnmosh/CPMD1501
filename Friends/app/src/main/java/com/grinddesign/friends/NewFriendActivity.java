@@ -3,11 +3,14 @@ package com.grinddesign.friends;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,10 +52,11 @@ public class NewFriendActivity extends ActionBarActivity {
         fyear = (EditText) findViewById(R.id.year1);
         save = (Button) findViewById(R.id.save);
         fState = (Spinner) findViewById(R.id.spinner);
-        fyear.setFilters(new InputFilter[]{new NumInputFilter(0, 120)});
+        fyear.setFilters(new InputFilter[]{new NumInputFilter(1, 120)});
         states = getResources().getStringArray(R.array.states);
 
         final ArrayAdapter<String> statesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, states);
+
 
         fState.setAdapter(statesAdapter);
 
