@@ -34,7 +34,7 @@ public class NewFriendActivity extends ActionBarActivity {
     Button save;
     String name;
     String state;
-    String year;
+    Number year;
     EditText fname;
     EditText fyear;
     Spinner fState;
@@ -60,7 +60,7 @@ public class NewFriendActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 name = fname.getText().toString().trim();
-                year = fyear.getText().toString().trim();
+                year = Integer.parseInt(fyear.getText().toString());
                 state = fState.getSelectedItem().toString().trim();
 
                 if (!name.equals("") && !year.equals("") && !state.equals("Select A State")) {

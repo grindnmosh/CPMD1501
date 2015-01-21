@@ -26,7 +26,7 @@ public class FriendCell extends ArrayAdapter<String> {
 
         String names = arrayLister.get(position);
         String states = FriendListActivity.stateArray.get(position);
-        String years = FriendListActivity.yearArray.get(position);
+        Number years = FriendListActivity.yearArray.get(position);
 
 
 
@@ -44,7 +44,7 @@ public class FriendCell extends ArrayAdapter<String> {
 
         //this is to assign the date to the proper field
         TextView tvSub2  = (TextView) view.findViewById(R.id.year);
-        tvSub2.setText(years);
+        tvSub2.setText(years.toString());
 
         return view;
     }

@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +37,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     public static ArrayList<String> nameArray = new ArrayList<String>();
     public static ArrayList<String> stateArray = new ArrayList<String>();
     public static ArrayList<String> oidArray = new ArrayList<String>();
-    public static ArrayList<String> yearArray = new ArrayList<String>();
+    public static ArrayList<Number> yearArray = new ArrayList<Number>();
     public static ArrayAdapter<String> mainAdapter;
     ListView lv;
     String namePos;
@@ -48,6 +49,9 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getIntent().getBooleanExtra("EXIT", false)) {
+            finish();
+        }
         setContentView(R.layout.activity_friendlist);
 
 
@@ -56,7 +60,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
         nameArray = new ArrayList<String>();
         stateArray = new ArrayList<String>();
         oidArray = new ArrayList<String>();
-        yearArray = new ArrayList<String>();
+        yearArray = new ArrayList<Number>();
         Log.i("Array", "Entry POint Query");
 
         ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -89,14 +93,14 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
                             String name = ((ParseObject) object).getString("Name");
                             String state = ((ParseObject) object).getString("State");
-                            String year = ((ParseObject) object).getString("Age");
+                            Number year = ((ParseObject) object).getNumber("Age");
                             String oid = ((ParseObject) object).getObjectId();
 
 
 
                             Log.i("Array", name);
                             Log.i("Array", state);
-                            Log.i("Array", year);
+                            Log.i("Array", year.toString());
                             Log.i("ID", oid);
 
                             nameArray.add(name);
@@ -140,7 +144,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                         Log.i("testing", object.toString());
                         String name = ((ParseObject) object).getString("Name");
                         String state = ((ParseObject) object).getString("State");
-                        String year = ((ParseObject) object).getString("Age");
+                        Number year = ((ParseObject) object).getNumber("Age");
                         String oid = ((ParseObject) object).getObjectId();
 
 
@@ -383,7 +387,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                         nameArray = new ArrayList<String>();
                         stateArray = new ArrayList<String>();
                         oidArray = new ArrayList<String>();
-                        yearArray = new ArrayList<String>();
+                        yearArray = new ArrayList<Number>();
                         if (e == null) {
                             for (int i = 0; i < list.size(); i++) {
 
@@ -393,14 +397,14 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
                                 String name = ((ParseObject) object).getString("Name");
                                 String state = ((ParseObject) object).getString("State");
-                                String year = ((ParseObject) object).getString("Age");
+                                Number year = ((ParseObject) object).getNumber("Age");
                                 String oid = ((ParseObject) object).getObjectId();
 
 
 
                                 Log.i("Array", name);
                                 Log.i("Array", state);
-                                Log.i("Array", year);
+                                Log.i("Array", year.toString());
                                 Log.i("ID", oid);
 
                                 nameArray.add(name);
@@ -442,6 +446,17 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             }
 
         }, 0, 20000);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+
     }
 
 }

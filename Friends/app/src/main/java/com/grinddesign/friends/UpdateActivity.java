@@ -36,7 +36,7 @@ public class UpdateActivity extends ActionBarActivity {
     String name;
     String state;
     String ois;
-    String year;
+    Number year;
     EditText upName;
     Spinner upState;
     EditText upYear;
@@ -78,10 +78,10 @@ public class UpdateActivity extends ActionBarActivity {
                 public void done(ParseObject object, com.parse.ParseException e) {
                     if (e == null) {
                         name = object.getString("Name");
-                        year = object.getString("Age");
+                        year = object.getInt("Age");
                         state = object.getString("State");
                         upName.setText(name);
-                        upYear.setText(year);
+                        upYear.setText(year.toString());
                         if (!state.equals(null)) {
                             int spinnerPosition = statesAdapter.getPosition(state);
                             upState.setSelection(spinnerPosition);
@@ -98,10 +98,10 @@ public class UpdateActivity extends ActionBarActivity {
                 public void done(ParseObject object, com.parse.ParseException e) {
                     if (e == null) {
                         name = object.getString("Name");
-                        year = object.getString("Age");
+                        year = object.getInt("Age");
                         state = object.getString("State");
                         upName.setText(name);
-                        upYear.setText(year);
+                        upYear.setText(year.toString());
                         if (!state.equals(null)) {
                             int spinnerPosition = statesAdapter.getPosition(state);
                             upState.setSelection(spinnerPosition);
@@ -117,7 +117,7 @@ public class UpdateActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 name = upName.getText().toString();
-                year = upYear.getText().toString();
+                year = Integer.parseInt(upYear.getText().toString());
                 state = upState.getSelectedItem().toString();
                 //FriendListActivity.nameArray = new ArrayList<String>();
 
