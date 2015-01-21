@@ -70,8 +70,7 @@ public class UpdateActivity extends ActionBarActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-            Connection con = new Connection(thisHere);
-            con.connection();
+
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
 
@@ -126,8 +125,7 @@ public class UpdateActivity extends ActionBarActivity {
                 NetworkInfo netInfo = cm.getActiveNetworkInfo();
                 if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-                    Connection con = new Connection(thisHere);
-                    con.connection();
+
 
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
                     query.getInBackground(ois, new GetCallback<ParseObject>() {

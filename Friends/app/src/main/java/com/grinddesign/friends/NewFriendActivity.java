@@ -66,8 +66,7 @@ public class NewFriendActivity extends ActionBarActivity {
                 NetworkInfo netInfo = cm.getActiveNetworkInfo();
                 if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-                    Connection con = new Connection(thisHere);
-                    con.connection();
+
 
                     ParseObject rf = new ParseObject("rf");
                     rf.put("Name", name);
@@ -84,7 +83,7 @@ public class NewFriendActivity extends ActionBarActivity {
                     rf.put("Name", name);
                     rf.put("State", state);
                     rf.put("Age", year);
-
+                    rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
                     rf.pinInBackground();
                     rf.saveEventually();
                     FriendListActivity.mainAdapter.notifyDataSetChanged();

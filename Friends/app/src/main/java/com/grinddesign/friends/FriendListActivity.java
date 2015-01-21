@@ -27,6 +27,8 @@ import com.parse.SignUpCallback;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class FriendListActivity extends ActionBarActivity implements AdapterView.OnItemLongClickListener, AdapterView.OnItemClickListener {
@@ -40,6 +42,8 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     String namePos;
     String oidPos;
     Context thisHere = this;
+    private Timer sched;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +119,10 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             mainAdapter = new FriendCell(this, R.layout.activity_friendcell, nameArray);
             lv.setOnItemClickListener(this);
             lv.setOnItemLongClickListener(this);
+
             lv.setAdapter(mainAdapter);
+
+            resume();
 
         }else{
             Log.i("testing", "HITTTTTTT!!!!!!");
@@ -198,13 +205,10 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View strings,
                                    final int position, long id) {
-
+        this.sched.cancel();
         ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-
-            Connection con = new Connection(thisHere);
-            con.connection();
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
             query.findInBackground(new FindCallback<ParseObject>() {
@@ -219,12 +223,15 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                             String name = ((ParseObject) object).getString("Name");
                             String state = ((ParseObject) object).getString("State");
                             String age = ((ParseObject) object).getString("Age");
+                            String oid = ((ParseObject) object).getObjectId();
                             if (namePos.equals(name)) {
-                                ((ParseObject) object).unpinInBackground();
+                                ((ParseObject) object).deleteInBackground();
                                 nameArray.remove(name);
                                 stateArray.remove(state);
                                 stateArray.remove(age);
+                                oidArray.remove(oid);
                                 mainAdapter.notifyDataSetChanged();
+
                             }
 
 
@@ -267,8 +274,10 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                     }
                 }
             });
+
         }
 
+        resume();
         return false;
     }
 
@@ -343,4 +352,96 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
 
     }
+
+    private void TimerMethod()
+    {
+        this.runOnUiThread(Timer_Tick);
+    }
+
+
+    private Runnable Timer_Tick = new Runnable() {
+        public void run() {
+
+
+            ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+                try {
+                    List<ParseObject> objects = query.find();
+                    ParseObject.pinAllInBackground(objects);
+                } catch (com.parse.ParseException e) {
+                    e.printStackTrace();
+                }
+
+                query.findInBackground(new FindCallback<ParseObject>() {
+
+                    @Override
+                    public void done(List list, com.parse.ParseException e) {
+                        Log.i("Array", "Entry POint Done");
+                        nameArray = new ArrayList<String>();
+                        stateArray = new ArrayList<String>();
+                        oidArray = new ArrayList<String>();
+                        yearArray = new ArrayList<String>();
+                        if (e == null) {
+                            for (int i = 0; i < list.size(); i++) {
+
+                                Object object = list.get(i);
+
+
+
+                                String name = ((ParseObject) object).getString("Name");
+                                String state = ((ParseObject) object).getString("State");
+                                String year = ((ParseObject) object).getString("Age");
+                                String oid = ((ParseObject) object).getObjectId();
+
+
+
+                                Log.i("Array", name);
+                                Log.i("Array", state);
+                                Log.i("Array", year);
+                                Log.i("ID", oid);
+
+                                nameArray.add(name);
+                                stateArray.add(state);
+                                oidArray.add(oid);
+                                yearArray.add(year);
+                                if (nameArray != null) {
+                                    Log.i("Array", oidArray.toString());
+                                    mainAdapter.notifyDataSetChanged();
+                                }
+
+                            }
+                            mainAdapter = new FriendCell(thisHere, R.layout.activity_friendcell, nameArray);
+                            lv.setOnItemClickListener(FriendListActivity.this);
+                            lv.setOnItemLongClickListener(FriendListActivity.this);
+
+                            lv.setAdapter(mainAdapter);
+
+                        } else {
+                            Log.d("Failed", "Error: " + e.getMessage());
+                        }
+                    }
+                });
+
+
+
+            }else{
+                //. Do Nothing
+            }
+        }
+    };
+
+    public void resume() {
+        sched = new Timer();
+        sched.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                TimerMethod();
+            }
+
+        }, 0, 20000);
+    }
+
 }

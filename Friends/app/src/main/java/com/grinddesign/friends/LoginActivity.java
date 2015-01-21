@@ -52,8 +52,7 @@ public class LoginActivity extends ActionBarActivity {
                 NetworkInfo netInfo = cm.getActiveNetworkInfo();
                 if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-                    Connection con = new Connection(thisHere);
-                    con.connection();
+
 
                     ParseUser.logInInBackground(userid, pass,
                             new LogInCallback() {
@@ -79,7 +78,7 @@ public class LoginActivity extends ActionBarActivity {
 
 
                 }else{
-                    Toast.makeText(thisHere, "No network detected. Please connect to a network", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(thisHere, "No network detected. Please connect to a network to login", Toast.LENGTH_SHORT).show();
                 }
 
             }
