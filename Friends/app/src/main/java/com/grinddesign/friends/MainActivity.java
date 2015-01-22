@@ -18,8 +18,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Parse.enableLocalDatastore(this);
+
         Parse.initialize(this, "jR7Hl4PT0g2y5BZQP1kpwHduKbSKs5B8ZqUZgkW7", "T3wn1MrWL1cQb3Act2u3GvSFlkJZIegx55gdmdqy");
+        Parse.enableLocalDatastore(this);
 
         ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();

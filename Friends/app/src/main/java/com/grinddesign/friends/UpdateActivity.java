@@ -134,7 +134,7 @@ public class UpdateActivity extends ActionBarActivity {
                                 object.put("Name", name);
                                 object.put("State", state);
                                 object.put("Age", year);
-
+                                object.pinInBackground();
                                 object.saveInBackground();
                                 FriendListActivity.mainAdapter.notifyDataSetChanged();
 

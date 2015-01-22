@@ -64,11 +64,12 @@ public class NewFriendActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 name = fname.getText().toString().trim();
-                year = Integer.parseInt(fyear.getText().toString());
+                String age = fyear.getText().toString();
+
                 state = fState.getSelectedItem().toString().trim();
 
-                if (!name.equals("") && !year.equals("") && !state.equals("Select A State")) {
-
+                if (!name.equals("") && !age.equals("") && !state.equals("Select A State")) {
+                    year = Integer.parseInt(fyear.getText().toString());
                     ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
                     NetworkInfo netInfo = cm.getActiveNetworkInfo();
                     if (netInfo != null && netInfo.isConnectedOrConnecting()) {
@@ -79,6 +80,7 @@ public class NewFriendActivity extends ActionBarActivity {
                         rf.put("State", state);
                         rf.put("Age", year);
                         rf.setACL(new ParseACL(ParseUser.getCurrentUser()));
+                        rf.pinInBackground();
                         rf.saveInBackground();
                         FriendListActivity.mainAdapter.notifyDataSetChanged();
                         Intent friendlist = new Intent(NewFriendActivity.this, FriendListActivity.class);

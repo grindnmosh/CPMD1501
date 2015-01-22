@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.grinddesign.test.Connection;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseACL;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -63,12 +65,15 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
         yearArray = new ArrayList<Number>();
         Log.i("Array", "Entry POint Query");
 
+        Parse.initialize(this, "jR7Hl4PT0g2y5BZQP1kpwHduKbSKs5B8ZqUZgkW7", "T3wn1MrWL1cQb3Act2u3GvSFlkJZIegx55gdmdqy");
+
         ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
             Connection con = new Connection(thisHere);
             con.connection();
+
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
             try {
@@ -77,7 +82,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             } catch (com.parse.ParseException e) {
                 e.printStackTrace();
             }
-
+            query.fromLocalDatastore();
             query.findInBackground(new FindCallback<ParseObject>() {
 
                 @Override
@@ -97,11 +102,6 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                             String oid = ((ParseObject) object).getObjectId();
 
 
-
-                            Log.i("Array", name);
-                            Log.i("Array", state);
-                            Log.i("Array", year.toString());
-                            Log.i("ID", oid);
 
                             nameArray.add(name);
                             stateArray.add(state);
@@ -126,7 +126,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
             lv.setAdapter(mainAdapter);
 
-            resume();
+
 
         }else{
             Log.i("testing", "HITTTTTTT!!!!!!");
@@ -172,7 +172,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
         }
 
-
+        resume();
     }
 
 
@@ -209,11 +209,11 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View strings,
                                    final int position, long id) {
-        this.sched.cancel();
+
         ConnectivityManager cm = (ConnectivityManager) thisHere.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-
+            this.sched.cancel();
             ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
             query.findInBackground(new FindCallback<ParseObject>() {
 
@@ -281,7 +281,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
         }
 
-        resume();
+
         return false;
     }
 
@@ -378,7 +378,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                 } catch (com.parse.ParseException e) {
                     e.printStackTrace();
                 }
-
+                query.fromLocalDatastore();
                 query.findInBackground(new FindCallback<ParseObject>() {
 
                     @Override
@@ -401,11 +401,6 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                                 String oid = ((ParseObject) object).getObjectId();
 
 
-
-                                Log.i("Array", name);
-                                Log.i("Array", state);
-                                Log.i("Array", year.toString());
-                                Log.i("ID", oid);
 
                                 nameArray.add(name);
                                 stateArray.add(state);
