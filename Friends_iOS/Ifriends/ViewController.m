@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import <Parse/Parse.h>
 #import "ListViewController.h"
+#import <unistd.h>
+#import <netdb.h>
 
 @interface ViewController ()
 
@@ -34,7 +36,25 @@
     } else {
         NSLog(@"not logged in");
     }
+    [self isNetworkAvailable];
 }
+
+-(BOOL)isNetworkAvailable
+{
+    char *hostname;
+    struct hostent *hostinfo;
+    hostname = "google.com";
+    hostinfo = gethostbyname (hostname);
+    if (hostinfo == NULL){
+        NSLog(@"-> no connection!\n");
+        return NO;
+    }
+    else{
+        NSLog(@"-> connection established!\n");
+        return YES;
+    }
+}
+
 - (void)applicationFinishedRestoringState{
     [super applicationFinishedRestoringState];
     

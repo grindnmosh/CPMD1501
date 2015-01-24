@@ -10,6 +10,8 @@
 #import <Parse/Parse.h>
 #import "UpdateViewController.h"
 #import "FCell.h"
+#import <unistd.h>
+#import <netdb.h>
 
 @interface ListViewController ()
 
@@ -32,36 +34,48 @@
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:YES];
-    friendsObj = [[NSMutableArray alloc] initWithObjects: nil];
-    yearsObj = [[NSMutableArray alloc] initWithObjects: nil];
-    stateObj = [[NSMutableArray alloc] initWithObjects: nil];
-    idObj = [[NSMutableArray alloc] initWithObjects: nil];
-    query = [PFQuery queryWithClassName:@"rf"];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
-            for (int i = 0; i < [objects count]; i++)
-            {
-                name = [[objects objectAtIndex:i] objectForKey:@"Name"];
-                years = [[objects objectAtIndex:i] objectForKey:@"Age"];
-                state = [[objects objectAtIndex:i] objectForKey:@"State"];
-                PFObject *myObject = [objects objectAtIndex:i];
-                NSString *object = [myObject objectId];
-                objId = object;
-                [friendsObj addObject:name];
-                [yearsObj addObject:years];
-                [stateObj addObject:state];
-                [idObj addObject:objId];
-                NSLog(@"%@", name);
-                NSLog(@"%@", years);
-                NSLog(@"%@", objId);
+    
+    char *hostname;
+    struct hostent *hostinfo;
+    hostname = "google.com";
+    hostinfo = gethostbyname (hostname);
+    if (hostinfo == NULL){
+        NSLog(@"-> no connection!\n");
+    }
+    else{
+        NSLog(@"-> connection established!\n");
+        friendsObj = [[NSMutableArray alloc] initWithObjects: nil];
+        yearsObj = [[NSMutableArray alloc] initWithObjects: nil];
+        stateObj = [[NSMutableArray alloc] initWithObjects: nil];
+        idObj = [[NSMutableArray alloc] initWithObjects: nil];
+        query = [PFQuery queryWithClassName:@"rf"];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (!error) {
+                for (int i = 0; i < [objects count]; i++)
+                {
+                    name = [[objects objectAtIndex:i] objectForKey:@"Name"];
+                    years = [[objects objectAtIndex:i] objectForKey:@"Age"];
+                    state = [[objects objectAtIndex:i] objectForKey:@"State"];
+                    PFObject *myObject = [objects objectAtIndex:i];
+                    NSString *object = [myObject objectId];
+                    objId = object;
+                    [friendsObj addObject:name];
+                    [yearsObj addObject:years];
+                    [stateObj addObject:state];
+                    [idObj addObject:objId];
+                    NSLog(@"%@", name);
+                    NSLog(@"%@", years);
+                    NSLog(@"%@", objId);
+                }
+            } else {
+                NSLog(@"Error: %@ %@", error, [error userInfo]);
             }
-        } else {
-            // Log details of the failure
-            NSLog(@"Error: %@ %@", error, [error userInfo]);
-        }
+            [_friendslist reloadData];
+        }];
         [_friendslist reloadData];
-    }];
-    [_friendslist reloadData];
+       
+    }
+    
 }
 
 - (void)didReceiveMemoryWarning {

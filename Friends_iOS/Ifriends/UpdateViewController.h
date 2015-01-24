@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UpdateViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate>
+@interface UpdateViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
 {
     NSArray *states;
     NSString *saveId;

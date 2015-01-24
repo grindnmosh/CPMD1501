@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface NewViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate>
+@interface NewViewController : UIViewController <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate>
 {
     NSArray *states;
     IBOutlet UITextField *fryears;
