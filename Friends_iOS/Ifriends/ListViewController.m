@@ -37,14 +37,7 @@
     struct hostent *hostinfo;
     hostname = "parse.com";
     hostinfo = gethostbyname (hostname);
-    if (hostinfo == NULL){
-        NSLog(@"-> no connection!\n");
-        
-    }
-    else{
-        NSLog(@"-> connection established!\n");
-        
-    }
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated {
