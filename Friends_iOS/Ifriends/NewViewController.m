@@ -8,6 +8,8 @@
 
 #import "NewViewController.h"
 #import <Parse/Parse.h>
+#import <unistd.h>
+#import <netdb.h>
 
 @interface NewViewController ()
 
@@ -80,20 +82,48 @@
     //save button
     else if (button.tag == 1)
     {
+        
         NSString *nameTest = [frName.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         if (![nameTest  isEqual: @""] && ![fryears.text  isEqual: @""] && ![[self->states objectAtIndex:[self.statePick1 selectedRowInComponent:0]]  isEqual: @"Select A State"])
         {
-            PFObject *rf = [PFObject objectWithClassName:@"rf"];
-            rf[@"Name"] = frName.text;
-            NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
-            f.numberStyle = NSNumberFormatterDecimalStyle;
-            NSNumber *myNumber = [f numberFromString:fryears.text];
-            rf[@"Age"] = myNumber;
-            NSString *stateName = [self->states objectAtIndex:[self.statePick1 selectedRowInComponent:0]];
-            NSLog(@"%@", stateName);
-            rf[@"State"] = stateName;
-            [rf saveInBackground];
-            [self dismissViewControllerAnimated:YES completion:nil];
+            char *hostname;
+            struct hostent *hostinfo;
+            hostname = "parse.com";
+            hostinfo = gethostbyname (hostname);
+            if (hostinfo == NULL){
+                NSLog(@"-> no connection!\n");
+                
+                PFObject *rf = [PFObject objectWithClassName:@"rf"];
+                rf[@"Name"] = frName.text;
+                NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+                f.numberStyle = NSNumberFormatterDecimalStyle;
+                NSNumber *myNumber = [f numberFromString:fryears.text];
+                rf[@"Age"] = myNumber;
+                NSString *stateName = [self->states objectAtIndex:[self.statePick1 selectedRowInComponent:0]];
+                NSLog(@"%@", stateName);
+                rf[@"State"] = stateName;
+                [rf pinInBackground];
+                [rf saveEventually];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
+            else{
+                NSLog(@"-> connection established!\n");
+                NSLog(@"-> connection established!\n");
+                NSLog(@"-> no connection!\n");
+                
+                PFObject *rf = [PFObject objectWithClassName:@"rf"];
+                rf[@"Name"] = frName.text;
+                NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+                f.numberStyle = NSNumberFormatterDecimalStyle;
+                NSNumber *myNumber = [f numberFromString:fryears.text];
+                rf[@"Age"] = myNumber;
+                NSString *stateName = [self->states objectAtIndex:[self.statePick1 selectedRowInComponent:0]];
+                NSLog(@"%@", stateName);
+                rf[@"State"] = stateName;
+                [rf pinInBackground];
+                [rf saveInBackground];
+                [self dismissViewControllerAnimated:YES completion:nil];
+            }
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Missing Information!" message:@"Please fill in all required fields" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
@@ -102,6 +132,8 @@
     }
 }
 
-
+-(void)test:(UIAlertView*)x{
+    [x dismissWithClickedButtonIndex:-1 animated:YES];
+}
 
 @end

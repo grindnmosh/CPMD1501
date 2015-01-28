@@ -10,6 +10,7 @@
 #import <Parse/Parse.h>
 #import <unistd.h>
 #import <netdb.h>
+#import "ListViewController.h"
 
 @interface UpdateViewController ()
 
@@ -94,8 +95,7 @@
         if (![nameTest  isEqual: @""] && ![fryears.text  isEqual: @""] && ![[self->states objectAtIndex:[self.statePick2 selectedRowInComponent:0]]  isEqual: @"Select A State"])
         {
             PFQuery *query = [PFQuery queryWithClassName:@"rf"];
-            NSLog(@"%@", saveId);
-            // Retrieve the object by id
+            [query fromLocalDatastore];
             [query getObjectInBackgroundWithId:saveId block:^(PFObject *friend, NSError *error) {
                 friend[@"Name"] = frName.text;
                 NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
@@ -105,9 +105,8 @@
                 NSString *stateName = [self->states objectAtIndex:[self.statePick2 selectedRowInComponent:0]];
                 NSLog(@"%@", stateName);
                 friend[@"State"] = stateName;
-                [friend saveInBackground];
-        
-         
+                [friend pinInBackground];
+                [friend saveEventually];
             }];
             [self dismissViewControllerAnimated:YES completion:nil];
         } else {

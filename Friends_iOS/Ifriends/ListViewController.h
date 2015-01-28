@@ -15,15 +15,18 @@
     NSString *state;
     NSNumber *years;
     NSString *objId;
+    NSString *pinner;
     PFQuery *query;
     NSMutableArray *friendsObj;
     NSMutableArray *yearsObj;
     NSMutableArray *idObj;
     NSMutableArray *stateObj;
+    NSMutableArray *pinBack;
     NSString *passName;
     NSNumber *passYear;
     NSString *passState;
     NSString *passId;
+    NSTimer *check;
 }
 @property (weak, nonatomic) IBOutlet UITableView *friendslist;
 

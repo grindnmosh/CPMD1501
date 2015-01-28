@@ -25,25 +25,25 @@
     //[testObject saveInBackground];
     // Do any additional setup after loading the view, typically from a nib.
     _pass.secureTextEntry = YES;
-    
+    [PFUser enableAutomaticUser];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
     PFUser *currentUser = [PFUser currentUser];
     if ([currentUser objectId] != nil) {
-        NSLog(@"%@", [NSString stringWithFormat:@"@""%@",[currentUser valueForKey:@"username"]]);
+        NSLog(@"%@", [NSString stringWithFormat:@"@""%@",[[PFUser currentUser] valueForKey:@"username"]]);
         [self performSegueWithIdentifier: @"logged" sender: self];
     } else {
         NSLog(@"not logged in");
     }
-    [self isNetworkAvailable];
+    
 }
 
 -(BOOL)isNetworkAvailable
 {
     char *hostname;
     struct hostent *hostinfo;
-    hostname = "google.com";
+    hostname = "parse.com";
     hostinfo = gethostbyname (hostname);
     if (hostinfo == NULL){
         NSLog(@"-> no connection!\n");
@@ -53,6 +53,30 @@
         NSLog(@"-> connection established!\n");
         return YES;
     }
+}
+
+//show keyboard
+- (void)keyboardWillShow:(NSNotification *)notif
+{
+    
+}
+
+//hide keyboard
+- (void)keyboardWillHide:(NSNotification *)notif
+{
+    
+}
+
+//reset view when keyboard hides
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    
+    return YES;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
 }
 
 - (void)applicationFinishedRestoringState{

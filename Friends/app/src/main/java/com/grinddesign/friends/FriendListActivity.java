@@ -76,13 +76,8 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
 
 
             ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
-            try {
-                List<ParseObject> objects = query.find();
-                ParseObject.pinAllInBackground(objects);
-            } catch (com.parse.ParseException e) {
-                e.printStackTrace();
-            }
             query.fromLocalDatastore();
+            ParseObject.unpinAllInBackground();
             query.findInBackground(new FindCallback<ParseObject>() {
 
                 @Override
@@ -229,7 +224,8 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                             String age = ((ParseObject) object).getString("Age");
                             String oid = ((ParseObject) object).getObjectId();
                             if (namePos.equals(name)) {
-                                ((ParseObject) object).deleteInBackground();
+                                ((ParseObject) object).unpinInBackground();
+                                ((ParseObject) object).deleteEventually();
                                 nameArray.remove(name);
                                 stateArray.remove(state);
                                 stateArray.remove(age);
@@ -372,6 +368,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
+
                 try {
                     List<ParseObject> objects = query.find();
                     ParseObject.pinAllInBackground(objects);
@@ -440,7 +437,7 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
                 TimerMethod();
             }
 
-        }, 0, 20000);
+        }, 0, 5000);
     }
 
     @Override

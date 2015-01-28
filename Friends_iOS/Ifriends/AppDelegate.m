@@ -19,11 +19,10 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
        
-    // https://parse.com/docs/ios_guide#localdatastore/iOS
+    
     [Parse enableLocalDatastore];
     
-    [Parse setApplicationId:@"jR7Hl4PT0g2y5BZQP1kpwHduKbSKs5B8ZqUZgkW7"
-                  clientKey:@"T3wn1MrWL1cQb3Act2u3GvSFlkJZIegx55gdmdqy"];
+    [Parse setApplicationId:@"jR7Hl4PT0g2y5BZQP1kpwHduKbSKs5B8ZqUZgkW7" clientKey:@"T3wn1MrWL1cQb3Act2u3GvSFlkJZIegx55gdmdqy"];
     
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
