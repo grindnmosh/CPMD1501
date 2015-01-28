@@ -75,9 +75,19 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             con.connection();
 
 
+
+
+
+
+            try {
+                ParseQuery<ParseObject> query1 = ParseQuery.getQuery("rf");
+                List<ParseObject> objects = query1.find();
+                ParseObject.pinAllInBackground(objects);
+            } catch (com.parse.ParseException e) {
+                e.printStackTrace();
+            }
             ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
             query.fromLocalDatastore();
-            ParseObject.unpinAllInBackground();
             query.findInBackground(new FindCallback<ParseObject>() {
 
                 @Override
@@ -367,16 +377,11 @@ public class FriendListActivity extends ActionBarActivity implements AdapterView
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
             if (netInfo != null && netInfo.isConnectedOrConnecting()) {
 
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("rf");
 
-                try {
-                    List<ParseObject> objects = query.find();
-                    ParseObject.pinAllInBackground(objects);
-                } catch (com.parse.ParseException e) {
-                    e.printStackTrace();
-                }
-                query.fromLocalDatastore();
-                query.findInBackground(new FindCallback<ParseObject>() {
+
+
+                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("rf");
+                query2.findInBackground(new FindCallback<ParseObject>() {
 
                     @Override
                     public void done(List list, com.parse.ParseException e) {

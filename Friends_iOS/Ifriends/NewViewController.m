@@ -53,6 +53,33 @@
     return YES;
 }
 
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    NSString *numberRegex = @"[1-9]||[0-9][1-9]nil";
+    NSPredicate *ageTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", numberRegex];
+    BOOL b = [ageTest evaluateWithObject:fryears.text];
+    
+    if (b)
+    {
+        NSLog(@"In Range %@", fryears.text);
+        return YES;
+    }
+    else
+    {
+        self->fryears.text = @"";
+        NSLog(@"Not In Range");
+        NSLog(@"-> connection established!\n");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Not allowed number"
+                                                        message:@"Please enter a number between 1 and 99"
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        fryears.text = @"";
+        return NO;
+    }
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
 }
@@ -92,7 +119,13 @@
             hostinfo = gethostbyname (hostname);
             if (hostinfo == NULL){
                 NSLog(@"-> no connection!\n");
-                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Network Detected"
+                                                                message:@"Will save to server later"
+                                                               delegate:self
+                                                      cancelButtonTitle:nil
+                                                      otherButtonTitles:nil];
+                [alert show];
+                [self performSelector:@selector(test:) withObject:alert afterDelay:2];
                 PFObject *rf = [PFObject objectWithClassName:@"rf"];
                 rf[@"Name"] = frName.text;
                 NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
@@ -108,9 +141,14 @@
             }
             else{
                 NSLog(@"-> connection established!\n");
-                NSLog(@"-> connection established!\n");
-                NSLog(@"-> no connection!\n");
-                
+
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connected to WiFi"
+                                                                message:@"communicating with Server"
+                                                               delegate:self
+                                                      cancelButtonTitle:nil
+                                                      otherButtonTitles:nil];
+                [alert show];
+                [self performSelector:@selector(test:) withObject:alert afterDelay:2];
                 PFObject *rf = [PFObject objectWithClassName:@"rf"];
                 rf[@"Name"] = frName.text;
                 NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
@@ -121,7 +159,7 @@
                 NSLog(@"%@", stateName);
                 rf[@"State"] = stateName;
                 [rf pinInBackground];
-                [rf saveInBackground];
+                [rf saveEventually];
                 [self dismissViewControllerAnimated:YES completion:nil];
             }
         } else {

@@ -73,11 +73,9 @@
                     name = [myObject objectForKey:@"Name"];
                     years = [myObject objectForKey:@"Age"];
                     state = [myObject objectForKey:@"State"];
-                    objId = [myObject objectId];
                     [friendsObj addObject:name];
                     [yearsObj addObject:years];
                     [stateObj addObject:state];
-                    [idObj addObject:objId];
                 }
             } else {
                 NSLog(@"Error: %@ %@", error, [error userInfo]);
@@ -140,34 +138,7 @@
     if (hostinfo == NULL){
         NSLog(@"-> no connection!\n");
         
-        friendsObj = [[NSMutableArray alloc] initWithObjects: nil];
-        yearsObj = [[NSMutableArray alloc] initWithObjects: nil];
-        stateObj = [[NSMutableArray alloc] initWithObjects: nil];
-        idObj = [[NSMutableArray alloc] initWithObjects: nil];
-        pinBack = [[NSMutableArray alloc] initWithObjects: nil];
-        query = [PFQuery queryWithClassName:@"rf"];
-        [query fromLocalDatastore];
-        [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-            NSLog(@"%@", objects);
-            if (!error) {
-                NSLog(@"%lu", (unsigned long)[objects count]);
-                for (int i = 0; i < [objects count]; i++)
-                {
-                    PFObject *myObject = [objects objectAtIndex:i];
-                    name = [myObject objectForKey:@"Name"];
-                    years = [myObject objectForKey:@"Age"];
-                    state = [myObject objectForKey:@"State"];
-                    objId = [myObject objectId];
-                    [friendsObj addObject:name];
-                    [yearsObj addObject:years];
-                    [stateObj addObject:state];
-                    [idObj addObject:objId];
-                }
-            } else {
-                NSLog(@"Error: %@ %@", error, [error userInfo]);
-            }
-            [_friendslist reloadData];
-        }];
+        
     }else{
        
         query = [PFQuery queryWithClassName:@"rf"];
@@ -237,6 +208,7 @@
                 [stateObj removeObjectAtIndex:indexPath.row];
                 [yearsObj removeObjectAtIndex:indexPath.row];
                 [idObj removeObjectAtIndex:[indexPath row]];
+                [myObject unpinInBackground];
                 [_friendslist reloadData];
             } else {
                 // Log details of the failure
